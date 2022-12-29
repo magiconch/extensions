@@ -1,0 +1,31 @@
+{
+    "name": "first",
+    "description": "Base Level Extension",
+    "version": "1.0",
+    "manifest_version": 2,
+    "browser_action": {
+      "default_popup": "hello.html",
+      "default_icon": "hello_extensions.png"
+    },
+    "content_scripts": [
+      {
+        "matches": [
+          "file://*/*",
+          "http://*/*",
+          "https://*/*"
+        ],
+        "js": [
+          "contentscript.js"
+        ],
+        "run_at": "document_start",
+        "all_frames": true
+      }
+    ],
+    "web_accessible_resources": [
+      "contentscript.js"
+    ],
+    "permissions": [
+      "activeTab",
+      "storage"
+    ]
+  }
