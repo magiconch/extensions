@@ -1,0 +1,36 @@
+name: Pull Request Workflow
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  pr-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
+      - name: Add PR details to file
+        run: |
+          # Set the base URL for the GitHub API
+          api_url='https://api.github.com'
+
+          # Get the pull request number and repository from the event payload
+          pr_number=${{ github.event.number }}
+          repo=${{ github.event.repository.full_name }}
+
+          # Set the headers for the request
+          headers={
+            'Authorization': "token ${{ secrets.GITHUB_TOKEN }}",
+            'Accept': 'application/vnd.github+json',
+          }
+
+          # Get the details of the pull request
+          pr_url="$api_url/repos/$repo/pulls/$pr_number"
+          response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" $pr_url)
+          pr=$(echo $response | jq '. | {user: .user.login, title: .title, url: .html_url}')
+
+          # Append the details of the pull request to the file
+          echo $pr >> prs.json
