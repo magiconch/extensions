@@ -22,13 +22,14 @@ jobs:
           repo=${{ github.event.repository.full_name }}
 
           # Set the headers for the request
-          headers={
-            'Accept': 'application/vnd.github+json',
-          }
+          # headers={
+          #   'Authorization': "token ${{ secrets.GITHUB_TOKEN }}",
+          #   'Accept': 'application/vnd.github+json',
+          # }
 
           # Get the details of the pull request
           pr_url="$api_url/repos/$repo/pulls/$pr_number"
-          response=$(curl -s $pr_url)
+          response=$(curl -s -H "Accept: application/vnd.github+json" $pr_url)
           pr=$(echo $response | jq '. | {user: .user.login, title: .title, url: .html_url}')
 
           # Append the details of the pull request to the file
